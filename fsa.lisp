@@ -1,63 +1,58 @@
-; Define State
+; State
 (defclass State ()
-  ((is_final)
+  ((is_final
+	:accessor State-is_final)
    (action_to_take)
    (transitions))
 )
+(defun make-state (name) 
+	(setq name (make-instance 'State))
+	(setf (State-is_final name) t)
+	name)
+(defmethod print-state (obj)  ;; TODO - Make into repr
+	(write (type-of obj))
+	(format t "is final: ~A~%"
+		(slot-value obj 'is_final)))
 
-; Define Automaton
+
+; Automaton
 (defclass Automaton () 
-  ((alphabet)
+  ((alphabet
+	:accessor Automaton-alphabet)
    (states   ;; Add default value - define constructor!!!
-	:accessor Automaton-states
-    )
+	:accessor Automaton-states)
    (state
    
     ))
 )
-
-;; automata functions 
-; run
-
-;; State functions 
-; update state
-
-; have reader function create automata class from file contents
-
-
-;; pretty printing
-; (defmethod print-object ((obj Automaton) stream)
-;      (print-unreadable-object (obj stream :type t)
-;        (with-accessors ((x x)
-;                         (y y))
-;            obj
-;          (format stream "~a, X: ~a" x y))))
-
-
-
-; run on input data 
-
-; constructor
 (defun make-automaton (name ss) 
   (setq name (make-instance 'Automaton))
+  (setf (Automaton-alphabet name) '0)
   (setf (Automaton-states name) ss)
-  name
-  )
-  
-(defun state-inspector (name)
-  (if (slot-value name 'states)
-    (loop for state in (slot-value name 'states)
-      do (describe state))))
+  name)
+(defmethod print-automaton (obj)  ;; TODO - Make into repr
+	(format t "Alphabet - ~A~% 
+				States~%
+				------~%
+				~A~%"
+		(slot-value obj 'alphabet) (slot-value obj 'states))
+	)
 
-; create a list of automaton
-(setf automata (list 
-  (make-automaton 'sample '(2 1 2))
-  (make-automaton 'sample2 '(3 3 3 3))))
+;;;; MAIN
+(defun main ()
+	(setf automata (list 
+	  (make-automaton 'sample '())
+	  (make-automaton 'sample2 (list (make-state 'test_state) (make-state 'test_state2)))))
 
-(write '"Inspecting automaton.")
+	(loop for machine in automata
+	  do (print-automaton machine);(describe machine)
+	  
+		 (write '\'\'\')(TERPRI)
+		 
+		 (loop for s in (slot-value machine 'states)
+			do (print-state s))
 
-(loop for machine in automata
-  do (describe machine)
-	 (write "''''''''")
-	 (state-inspector machine)
-	 (terpri))
+		 (terpri))
+) ; main
+
+(main)
