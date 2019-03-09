@@ -1,11 +1,13 @@
 ; Helper
 (defmethod what (obj)
-	(write (slot-value obj 'repr))(terpri))
+	;; Make so can take just string or will evaluate lambda
+	(write (funcall (slot-value obj 'repr) obj))(terpri))
 
 ; State
 (defclass State ()
   ((repr 
-	:initform "Automaton state.")
+	:initform 
+	(lambda (obj) (format nil "is final: ~A~%" (slot-value obj 'is_final))))
    (is_final
 	:accessor state-is_final
 	:initform nil
@@ -14,48 +16,43 @@
    (transitions
     :accessor state-transitions))
 )
-(defmethod print-state (obj)  ;; TODO - Make into repr w/ generic reading print func
-	(write (type-of obj))
-	(format T "is final: ~A~%"
-		(slot-value obj 'state-is_final)))
 
 
 ; Automaton
 (defclass Automaton () 
   ((repr
-	:initform "Basic automaton.")
+	:initform 
+	(lambda (obj) (format nil "Alphabet - ~A~% 
+				States~%
+				------~%
+				~%"
+		(slot-value obj 'alphabet) (list-length (slot-value obj 'states)))))
    (alphabet
 	:accessor Automaton-alphabet
-	:initform '0)
+	:initform 0)
    (states
 	:accessor Automaton-states
-	:initarg :xstates)
+	:initarg :xstates
+	:initform (list ))
    (state
    
     ))
 )
-(defmethod print-automaton (obj)  ;; TODO - Make into repr
-	(format t "Alphabet - ~A~% 
-				States~%
-				------~%
-				~A~%"
-		(slot-value obj 'alphabet) (slot-value obj 'states))
-	)
+	
 
 ;;;; MAIN
 (defun main ()				;;;	;;;	;;;	;;;	;;;	TODO #1 - Add transition functions
 	(setf automata (list 
-	  (make-instance 'automaton :xstates (list ))
-	  (make-instance 'automaton :xstates (list (make-instance 'automaton) (make-instance 'automaton))
+	  (make-instance 'automaton)
+	  (make-instance 'automaton :xstates (list (make-instance 'state) (make-instance 'state))
 		)))
 
 	(loop for machine in automata
-	  do (print-automaton machine);(describe machine)
+	  do (what machine)
 	  
 		 (write '\'\'\')(TERPRI)
-		 
-		 (loop for s in (slot-value machine 'states)
-			do (what s));(print-state s))
+		 (if (slot-value machine 'states) (loop for s in (slot-value machine 'states)
+			do (what s)))
 
 		 (terpri))
 ) ; main
