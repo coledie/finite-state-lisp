@@ -1,25 +1,34 @@
+; Helper
+(defmethod what (obj)
+	(write (slot-value obj 'repr))(terpri))
+
 ; State
 (defclass State ()
-  ((is_final
-	:accessor State-is_final)
+  ((repr 
+	:initform "Automaton state.")
+   (is_final
+	:accessor state-is_final)
    (action_to_take)
-   (transitions))
+   (transitions
+    :accessor state-transitions))
 )
 (defun make-state (name) 
 	(setq name (make-instance 'State))
-	(setf (State-is_final name) t)
+	(setf (state-is_final name) t)
 	name)
-(defmethod print-state (obj)  ;; TODO - Make into repr
+(defmethod print-state (obj)  ;; TODO - Make into repr w/ generic reading print func
 	(write (type-of obj))
-	(format t "is final: ~A~%"
-		(slot-value obj 'is_final)))
+	(format T "is final: ~A~%"
+		(slot-value obj 'state-is_final)))
 
 
 ; Automaton
 (defclass Automaton () 
-  ((alphabet
+  ((repr
+	:initform "Basic automaton.")
+   (alphabet
 	:accessor Automaton-alphabet)
-   (states   ;; Add default value - define constructor!!!
+   (states
 	:accessor Automaton-states)
    (state
    
@@ -39,7 +48,7 @@
 	)
 
 ;;;; MAIN
-(defun main ()
+(defun main ()				;;;	;;;	;;;	;;;	;;;	TODO #1 - Add transition functions
 	(setf automata (list 
 	  (make-automaton 'sample '())
 	  (make-automaton 'sample2 (list (make-state 'test_state) (make-state 'test_state2)))))
@@ -50,7 +59,7 @@
 		 (write '\'\'\')(TERPRI)
 		 
 		 (loop for s in (slot-value machine 'states)
-			do (print-state s))
+			do (what s));(print-state s))
 
 		 (terpri))
 ) ; main
