@@ -7,15 +7,13 @@
   ((repr 
 	:initform "Automaton state.")
    (is_final
-	:accessor state-is_final)
+	:accessor state-is_final
+	:initform nil
+	:initarg :make-final)
    (action_to_take)
    (transitions
     :accessor state-transitions))
 )
-(defun make-state (name) 
-	(setq name (make-instance 'State))
-	(setf (state-is_final name) t)
-	name)
 (defmethod print-state (obj)  ;; TODO - Make into repr w/ generic reading print func
 	(write (type-of obj))
 	(format T "is final: ~A~%"
@@ -27,18 +25,15 @@
   ((repr
 	:initform "Basic automaton.")
    (alphabet
-	:accessor Automaton-alphabet)
+	:accessor Automaton-alphabet
+	:initform '0)
    (states
-	:accessor Automaton-states)
+	:accessor Automaton-states
+	:initarg :xstates)
    (state
    
     ))
 )
-(defun make-automaton (name ss) 
-  (setq name (make-instance 'Automaton))
-  (setf (Automaton-alphabet name) '0)
-  (setf (Automaton-states name) ss)
-  name)
 (defmethod print-automaton (obj)  ;; TODO - Make into repr
 	(format t "Alphabet - ~A~% 
 				States~%
@@ -50,8 +45,9 @@
 ;;;; MAIN
 (defun main ()				;;;	;;;	;;;	;;;	;;;	TODO #1 - Add transition functions
 	(setf automata (list 
-	  (make-automaton 'sample '())
-	  (make-automaton 'sample2 (list (make-state 'test_state) (make-state 'test_state2)))))
+	  (make-instance 'automaton :xstates (list ))
+	  (make-instance 'automaton :xstates (list (make-instance 'automaton) (make-instance 'automaton))
+		)))
 
 	(loop for machine in automata
 	  do (print-automaton machine);(describe machine)
