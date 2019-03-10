@@ -1,24 +1,26 @@
-; Helper
+;;; Helper
 (defmethod what (obj)
 	;; Make so can take just string or will evaluate lambda
 	(write (funcall (slot-value obj 'repr) obj))(terpri))
 
-; State
+
+;;; State
 (defclass State ()
   ((repr 
 	:initform 
 	(lambda (obj) (format nil "is final: ~A~%" (slot-value obj 'is_final))))
    (is_final
 	:accessor state-is_final
-	:initform nil
-	:initarg :make-final)
-   (action_to_take)
+	:initarg :make-final
+	:initform nil)
    (transitions
-    :accessor state-transitions))
+    :accessor state-transitions
+	:initarg :make-transitions
+	:initform (list )))
 )
 
 
-; Automaton
+;;; Automaton
 (defclass Automaton () 
   ((repr
 	:initform 
@@ -29,22 +31,29 @@
 		(slot-value obj 'alphabet) (list-length (slot-value obj 'states)))))
    (alphabet
 	:accessor Automaton-alphabet
-	:initform 0)
+	:initarg :make-alphabet
+	:initform (list ))
    (states
 	:accessor Automaton-states
-	:initarg :xstates
+	:initarg :make-states
 	:initform (list ))
-   (state
-   
+   (curr_state
+	:accessor Automaton-curr_state
+	:initarg :make-curr_state
+	:initform nil
     ))
 )
-	
+
+
+; TODO #1 - Read from file
+; alphabet = (X,X,X,X)
+; state = (name,is_final,transitions...)
 
 ;;;; MAIN
-(defun main ()				;;;	;;;	;;;	;;;	;;;	TODO #1 - Add transition functions
+(defun main () 
 	(setf automata (list 
 	  (make-instance 'automaton)
-	  (make-instance 'automaton :xstates (list (make-instance 'state) (make-instance 'state))
+	  (make-instance 'automaton :make-states (list (make-instance 'state) (make-instance 'state))
 		)))
 
 	(loop for machine in automata
@@ -55,6 +64,6 @@
 			do (what s)))
 
 		 (terpri))
-) ; main
+)
 
 (main)
