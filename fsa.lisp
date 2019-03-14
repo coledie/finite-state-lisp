@@ -1,7 +1,7 @@
 ;;; Helper
 (defmethod what (obj)
 	;; Make so can take just string or will evaluate lambda
-	(write (funcall (slot-value obj 'repr) obj))(terpri))
+	(format t (funcall (slot-value obj 'repr) obj))(terpri))
 
 
 ;;; State
@@ -24,11 +24,8 @@
 (defclass Automaton () 
   ((repr
 	:initform 
-	(lambda (obj) (format nil "Alphabet - ~A~% 
-				States~%
-				------~%
-				~%"
-		(slot-value obj 'alphabet) (list-length (slot-value obj 'states)))))
+	(lambda (obj) (format nil "Alphabet - ~A"
+		(slot-value obj 'alphabet))))
    (alphabet
 	:accessor Automaton-alphabet
 	:initarg :make-alphabet
@@ -59,9 +56,10 @@
 	(loop for machine in automata
 	  do (what machine)
 	  
-		 (write '\'\'\')(TERPRI)
-		 (if (slot-value machine 'states) (loop for s in (slot-value machine 'states)
-			do (what s)))
+		 (write '-------------)(TERPRI)
+		 (if (slot-value machine 'states) 
+		   (loop for s in (slot-value machine 'states)
+			 do (what s)))
 
 		 (terpri))
 )
