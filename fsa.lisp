@@ -1,4 +1,3 @@
-;;; Helper
 (defmethod what (obj)
 	;; Make so can take just string or will evaluate lambda
 	(format t (funcall (slot-value obj 'repr) obj))(terpri))
@@ -27,7 +26,7 @@
 	:accessor Automaton-states
 	:initarg :make-states
 	:initform (list ))
-   (transitions
+   (transitions                 ; Make into {state: '(lambda lambda ...)}
     :accessor state-transitions
 	:initarg :make-transitions
 	:initform (list ))))
@@ -37,8 +36,6 @@
    (format t tape)(TERPRI)
    
    (write '-------------)(TERPRI)
-   
-   (loop for s in tape do (format t s))
    
    (what machine)
 
@@ -52,18 +49,33 @@
 	
 	;; make sure every item in letter is in alphabet
 	
+	(setq states (list 1)) 
+	(setq new_states (list )) 
+	
+	;; use collect
+	
 	;; Progress through tape
-	(loop for letter across tape 
-	   do 
-	      (princ letter)
-		  
-		  ;; Go through every transition function w/ state and letter
-		  ;; if output is not nil add it to list
-		  
-		  ;; go though new state list and remove duplicates
-		  
-		  )
+	(loop for letter across tape do 
+		(loop for s in states do
+			(setq new_states (list )) 
+			
+			(format t "L ~A" letter)
+			  
+			;; for each letter apply each transition and add values to list
+			(dolist (func (slot-value machine 'transitions))
+				(setq new_states (append new_states (list (funcall func s letter)))))
 
+			;; remove duplicates
+			
+			(TERPRI)
+		)
+		
+		(setq states new_states)
+		
+		(loop for s in states do (format t "S ~A" s)(TERPRI))
+	)
+		  
+	new_states
 )
 
 
@@ -72,7 +84,8 @@
 
 	(setq automata 
 	  (make-instance 'automaton 
-	    :make-states (list (make-instance 'state) (make-instance 'state))))
+	    :make-states (list (make-instance 'state) (make-instance 'state))
+		:make-transitions (list (lambda (state letter) (format nil "X~AX" state)))))
 
 	(run automata tape))
 
