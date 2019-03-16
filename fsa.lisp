@@ -49,42 +49,38 @@
 	
 	;; make sure every item in letter is in alphabet
 	
-	(setq states (list 1)) 
+	(setq states (list 'X)) 
 	(setq new_states (list )) 
 	
 	;; use collect
 	
 	;; Progress through tape
 	(loop for letter across tape do 
+		(loop for s in states do (format t "S ~A" s)(TERPRI))
 		(loop for s in states do
-			(setq new_states (list )) 
+
 			
 			(format t "L ~A" letter)
 			  
-			;; for each letter apply each transition and add values to list
 			(dolist (func (slot-value machine 'transitions))
 				(setq new_states (append new_states (list (funcall func s letter)))))
 
 			;; remove duplicates
 			
-			(TERPRI)
-		)
+			(TERPRI))
 		
 		(setq states new_states)
+		(setq new_states (list )))
 		
-		(loop for s in states do (format t "S ~A" s)(TERPRI))
-	)
-		  
-	new_states
-)
+	new_states)
 
 
 (defun main () 
-	(setq tape "abcabcabc")
+	(setq tape "||||||||||||")
 
 	(setq automata 
-	  (make-instance 'automaton 
-	    :make-states (list (make-instance 'state) (make-instance 'state))
+		(make-instance 'automaton 
+		:make-states (list (make-instance 'state) (make-instance 'state))
 		:make-transitions (list (lambda (state letter) (format nil "X~AX" state)))))
 
 	(run automata tape))
