@@ -4,7 +4,6 @@
 	(format t (funcall (slot-value obj 'repr) obj))(terpri))
 
 
-;;; State
 (defclass State ()
   ((repr 
 	:initform 
@@ -12,15 +11,9 @@
    (is_final
 	:accessor state-is_final
 	:initarg :make-final
-	:initform nil)
-   (transitions
-    :accessor state-transitions
-	:initarg :make-transitions
-	:initform (list )))
-)
+	:initform nil)))
 
 
-;;; Automaton
 (defclass Automaton () 
   ((repr
 	:initform 
@@ -34,34 +27,53 @@
 	:accessor Automaton-states
 	:initarg :make-states
 	:initform (list ))
-   (curr_state
-	:accessor Automaton-curr_state
-	:initarg :make-curr_state
-	:initform nil
-    ))
+   (transitions
+    :accessor state-transitions
+	:initarg :make-transitions
+	:initform (list ))))
+
+
+(defun run (machine tape)
+   (format t tape)(TERPRI)
+   
+   (write '-------------)(TERPRI)
+   
+   (loop for s in tape do (format t s))
+   
+   (what machine)
+
+	(write '-------------)(TERPRI)
+
+	(if (slot-value machine 'states) 
+		(loop for s in (slot-value machine 'states)
+			do (what s)))
+
+	(terpri)
+	
+	;; make sure every item in letter is in alphabet
+	
+	;; Progress through tape
+	(loop for letter across tape 
+	   do 
+	      (princ letter)
+		  
+		  ;; Go through every transition function w/ state and letter
+		  ;; if output is not nil add it to list
+		  
+		  ;; go though new state list and remove duplicates
+		  
+		  )
+
 )
 
 
-; TODO #1 - Read from file
-; alphabet = (X,X,X,X)
-; state = (name,is_final,transitions...)
-
-;;;; MAIN
 (defun main () 
-	(setf automata (list 
-	  (make-instance 'automaton)
-	  (make-instance 'automaton :make-states (list (make-instance 'state) (make-instance 'state))
-		)))
+	(setq tape "abcabcabc")
 
-	(loop for machine in automata
-	  do (what machine)
-	  
-		 (write '-------------)(TERPRI)
-		 (if (slot-value machine 'states) 
-		   (loop for s in (slot-value machine 'states)
-			 do (what s)))
+	(setq automata 
+	  (make-instance 'automaton 
+	    :make-states (list (make-instance 'state) (make-instance 'state))))
 
-		 (terpri))
-)
+	(run automata tape))
 
 (main)
